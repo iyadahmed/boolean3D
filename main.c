@@ -13,6 +13,7 @@ int main()
         bvh.tris[i] = *(Triangle *)(mesh.tris + i);
     }
     build_tree(&bvh);
+    printf("Number of BVH Nodes = %d\n", bvh.nodes_num);
     free_bvh(bvh);
     free_binary_stl_mesh(mesh);
     return 0;
