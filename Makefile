@@ -13,7 +13,7 @@ build_subdir = $(release_build_subdir)
 
 bvh: main.c bvh.h read_stl.h statistics.h
 	mkdir -p ./build/$(build_subdir)
-	gcc main.c -o ./build/$(build_subdir)/bvh $(link_flags) $(compile_flags)
+	cc main.c -o ./build/$(build_subdir)/bvh $(link_flags) $(compile_flags)
 
 debug: bvh
 debug: build_subdir = $(debug_build_subdir)
