@@ -166,6 +166,7 @@ void build_tree_internal(BVH *bvh, int parent_node_index)
         return;
     }
 
+    // Determine split axis and position based on axis with greatest variance
     float variance_x = get_variance(&triangles_stats_x);
     float variance_y = get_variance(&triangles_stats_y);
     float variance_z = get_variance(&triangles_stats_z);
@@ -198,6 +199,7 @@ void build_tree_internal(BVH *bvh, int parent_node_index)
 
     float split_pos = get_mean(split_axis_stats);
 
+    // Partition triangles array
     int i = parent_node->first_triangle_index;
     int j = i + parent_node->tris_num;
 
@@ -228,7 +230,7 @@ void build_tree_internal(BVH *bvh, int parent_node_index)
     int right_node_first_triangle_index = i;
     int right_node_tris_num = parent_node->tris_num - left_node_tris_num;
 
-    parent_node->tris_num = 0;
+    parent_node->tris_num = 0; // Parent node is now a non-leaf node
 
     parent_node->left_child_index = get_new_node_index(bvh);
     Node *left_node = bvh->nodes + parent_node->left_child_index;
