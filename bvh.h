@@ -95,10 +95,10 @@ void aabb_union(AABB *aabb, const AABB *other)
     vec3_max(&aabb->upper_bound, &other->upper_bound);
 }
 
-// bool is_leaf_node(const Node *node)
-// {
-//     return node->tris_num == 0;
-// }
+bool is_leaf_node(const Node *node)
+{
+    return node->tris_num == 0;
+}
 
 int last_triangle_index(const Node *node)
 {
