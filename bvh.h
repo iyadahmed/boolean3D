@@ -39,7 +39,7 @@ typedef struct BVH
     int nodes_num, tris_num, used_nodes_num;
 } BVH;
 
-static void swap_triangles(Triangle *a, Triangle *b)
+void swap_triangles(Triangle *a, Triangle *b)
 {
     Triangle tmp;
     tmp = *a;
@@ -47,27 +47,27 @@ static void swap_triangles(Triangle *a, Triangle *b)
     *b = tmp;
 }
 
-static float get_vec3_component(const Vector3D *v, int index)
+float get_vec3_component(const Vector3D *v, int index)
 {
     const float *arr = &(v->x);
     return arr[index];
 }
 
-static void vec3_max(Vector3D *a, const Vector3D *b)
+void vec3_max(Vector3D *a, const Vector3D *b)
 {
     a->x = a->x > b->x ? a->x : b->x;
     a->y = a->y > b->y ? a->y : b->y;
     a->z = a->z > b->z ? a->z : b->z;
 }
 
-static void vec3_min(Vector3D *a, const Vector3D *b)
+void vec3_min(Vector3D *a, const Vector3D *b)
 {
     a->x = a->x < b->x ? a->x : b->x;
     a->y = a->y < b->y ? a->y : b->y;
     a->z = a->z < b->z ? a->z : b->z;
 }
 
-static AABB calc_triangle_aabb(const Triangle *t)
+AABB calc_triangle_aabb(const Triangle *t)
 {
     AABB aabb;
     aabb.lower_bound.x = fminf(fminf(t->a.x, t->b.x), t->c.x);
@@ -80,7 +80,7 @@ static AABB calc_triangle_aabb(const Triangle *t)
     return aabb;
 }
 
-static Vector3D calc_triangle_centroid(const Triangle *t)
+Vector3D calc_triangle_centroid(const Triangle *t)
 {
     Vector3D centroid;
     centroid.x = (t->a.x + t->b.x + t->c.x) / 3.0f;
@@ -89,18 +89,18 @@ static Vector3D calc_triangle_centroid(const Triangle *t)
     return centroid;
 }
 
-static void aabb_union(AABB *aabb, const AABB *other)
+void aabb_union(AABB *aabb, const AABB *other)
 {
     vec3_min(&aabb->lower_bound, &other->lower_bound);
     vec3_max(&aabb->upper_bound, &other->upper_bound);
 }
 
-// static bool is_leaf_node(const Node *node)
+// bool is_leaf_node(const Node *node)
 // {
 //     return node->tris_num == 0;
 // }
 
-static int last_triangle_index(const Node *node)
+int last_triangle_index(const Node *node)
 {
     return node->first_triangle_index + node->tris_num - 1;
 }
@@ -126,12 +126,12 @@ void free_bvh(BVH bvh)
     free(bvh.tris);
 }
 
-static int get_new_node_index(BVH *bvh)
+int get_new_node_index(BVH *bvh)
 {
     return bvh->used_nodes_num++;
 }
 
-static void build_tree_internal(BVH *bvh, int parent_node_index)
+void build_tree_internal(BVH *bvh, int parent_node_index)
 {
     Node *parent_node = bvh->nodes + parent_node_index;
 
