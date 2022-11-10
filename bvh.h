@@ -77,6 +77,7 @@ static AABB calc_triangle_aabb(const Triangle *t)
     aabb.upper_bound.x = fmaxf(fmaxf(t->a.x, t->b.x), t->c.x);
     aabb.upper_bound.y = fmaxf(fmaxf(t->a.y, t->b.y), t->c.y);
     aabb.upper_bound.z = fmaxf(fmaxf(t->a.z, t->b.z), t->c.z);
+    return aabb;
 }
 
 static Vector3D calc_triangle_centroid(const Triangle *t)
@@ -94,10 +95,10 @@ static void aabb_union(AABB *aabb, const AABB *other)
     vec3_max(&aabb->upper_bound, &other->upper_bound);
 }
 
-static bool is_leaf_node(const Node *node)
-{
-    return node->tris_num == 0;
-}
+// static bool is_leaf_node(const Node *node)
+// {
+//     return node->tris_num == 0;
+// }
 
 static int last_triangle_index(const Node *node)
 {
@@ -116,6 +117,13 @@ BVH allocate_bvh(int tris_num)
     bvh.nodes = (Node *)malloc(sizeof(Node) * bvh.nodes_num);
 
     bvh.used_nodes_num = 0;
+    return bvh;
+}
+
+void free_bvh(BVH bvh)
+{
+    free(bvh.nodes);
+    free(bvh.tris);
 }
 
 static int get_new_node_index(BVH *bvh)
@@ -123,12 +131,11 @@ static int get_new_node_index(BVH *bvh)
     return bvh->used_nodes_num++;
 }
 
-static void build_tree(BVH *bvh, int parent_node_index)
+static void build_tree_internal(BVH *bvh, int parent_node_index)
 {
     Node *parent_node = bvh->nodes + parent_node_index;
 
     assert(parent_node->first_triangle_index >= 0);
-    // FIXME: assertion fails
     assert(parent_node->first_triangle_index < bvh->tris_num);
     assert(parent_node->first_triangle_index + parent_node->tris_num <= bvh->tris_num);
 
@@ -140,7 +147,8 @@ static void build_tree(BVH *bvh, int parent_node_index)
     {
         int first_index = parent_node->first_triangle_index;
         int last_index = last_triangle_index(parent_node);
-        for (int i = first_index; i <= last_index; i++)
+        parent_node->bounding_box = calc_triangle_aabb(bvh->tris + first_index);
+        for (int i = first_index + 1; i <= last_index; i++)
         {
             const Triangle *t = bvh->tris + i;
             // Calculate bounding box for speeding up tree traversal later on
@@ -232,6 +240,15 @@ static void build_tree(BVH *bvh, int parent_node_index)
     right_node->first_triangle_index = right_node_first_triangle_index;
     right_node->tris_num = right_node_tris_num;
 
-    build_tree(bvh, parent_node->left_child_index);
-    build_tree(bvh, parent_node->right_child_index);
+    build_tree_internal(bvh, parent_node->left_child_index);
+    build_tree_internal(bvh, parent_node->right_child_index);
+}
+
+void build_tree(BVH *bvh)
+{
+    // Setup root node
+    bvh->nodes[0].first_triangle_index = 0;
+    bvh->nodes[0].tris_num = bvh->tris_num;
+    // Subdivide root node recursively
+    build_tree_internal(bvh, 0);
 }
