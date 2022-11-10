@@ -47,7 +47,7 @@ void swap_triangles(Triangle *a, Triangle *b)
     *b = tmp;
 }
 
-float get_vec3_component(const Vector3D *v, int index)
+float get_vec3_component_by_index(const Vector3D *v, int index)
 {
     const float *arr = &(v->x);
     return arr[index];
@@ -171,23 +171,23 @@ void build_tree_internal(BVH *bvh, int parent_node_index)
     float variance_z = get_variance(&triangles_stats_z);
     Vector3D variance = {variance_x, variance_y, variance_z};
 
-    int split_axis = 0;
+    int split_axis_index = 0;
     if (variance.y > variance.x)
     {
-        split_axis = 1;
+        split_axis_index = 1;
     }
-    if (variance.z > (split_axis == 0 ? variance.x : variance.y))
+    if (variance.z > (split_axis_index == 0 ? variance.x : variance.y))
     {
-        split_axis = 2;
+        split_axis_index = 2;
     }
 
     RunningStat *split_axis_stats = NULL;
 
-    if (split_axis == 0)
+    if (split_axis_index == 0)
     {
         split_axis_stats = &triangles_stats_x;
     }
-    else if (split_axis == 1)
+    else if (split_axis_index == 1)
     {
         split_axis_stats = &triangles_stats_y;
     }
@@ -205,7 +205,7 @@ void build_tree_internal(BVH *bvh, int parent_node_index)
     {
         Triangle *t = bvh->tris + i;
         Vector3D t_centroid = calc_triangle_centroid(t);
-        if (get_vec3_component(&t_centroid, split_axis) < split_pos)
+        if (get_vec3_component_by_index(&t_centroid, split_axis_index) < split_pos)
         {
             i++;
         }
