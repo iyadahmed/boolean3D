@@ -20,14 +20,14 @@ typedef struct BinarySTLMesh
     uint32_t tris_num;
 } BinarySTLMesh;
 
-void free_binary_stl_mesh(BinarySTLMesh mesh)
+void free_binary_stl_mesh(BinarySTLMesh *mesh)
 {
-    free(mesh.tris);
+    free(mesh->tris);
 }
 
-bool is_null_binary_stl_mesh(BinarySTLMesh mesh)
+bool is_null_binary_stl_mesh(BinarySTLMesh *mesh)
 {
-    return mesh.tris == NULL;
+    return mesh->tris == NULL;
 }
 
 void print_file_error(FILE *file)

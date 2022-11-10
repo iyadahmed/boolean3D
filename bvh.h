@@ -120,10 +120,10 @@ BVH allocate_bvh(int tris_num)
     return bvh;
 }
 
-void free_bvh(BVH bvh)
+void free_bvh(BVH *bvh)
 {
-    free(bvh.nodes);
-    free(bvh.tris);
+    free(bvh->nodes);
+    free(bvh->tris);
 }
 
 int get_new_node_index(BVH *bvh)

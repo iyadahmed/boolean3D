@@ -14,7 +14,7 @@ int main()
     }
     build_tree(&bvh);
     printf("Number of BVH Nodes = %d\n", bvh.nodes_num);
-    free_bvh(bvh);
-    free_binary_stl_mesh(mesh);
+    free_bvh(&bvh);
+    free_binary_stl_mesh(&mesh);
     return 0;
 }
